@@ -146,8 +146,8 @@ const ProjectsSection: React.FC = () => {
                                                                 paddingAngle={5}
                                                                 dataKey="value"
                                                             >
-                                                                {project.chartData.map((entry, index) => (
-                                                                    <Cell key={`cell-${index}`} fill={entry.color} />
+                                                                {project.chartData.map((entry: any, index) => (
+                                                                    <Cell key={`cell-${index}`} fill={entry.color || '#FF9AA2'} />
                                                                 ))}
                                                             </Pie>
                                                             <Tooltip />
