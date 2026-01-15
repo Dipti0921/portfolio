@@ -5,7 +5,7 @@ import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
 import { MapPin, GraduationCap, Target, Sparkles, Heart, Coffee } from 'lucide-react'
 import { Card, CardContent } from '@/components/ui/card'
-import { Avatar, AvatarFallback } from '@/components/ui/avatar'
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 
 const AboutSection: React.FC = () => {
     const [ref, inView] = useInView({
@@ -40,9 +40,9 @@ const AboutSection: React.FC = () => {
                     >
                         <Card className="border-2 border-pink-200 bg-gradient-to-br from-pink-50 to-rose-50/30">
                             <CardContent className="p-8">
-                                {/* Avatar */}
                                 <div className="flex justify-center mb-6">
                                     <Avatar className="w-32 h-32 border-4 border-white shadow-xl">
+                                        <AvatarImage src="/memoji.png" alt="Dipti Khalane" />
                                         <AvatarFallback className="text-4xl font-bold bg-gradient-to-br from-pink-400 to-rose-400 text-white">
                                             DK
                                         </AvatarFallback>
@@ -85,7 +85,7 @@ const AboutSection: React.FC = () => {
                         <p className="text-lg text-rose-700/70 mb-8 leading-relaxed">
                             I love working with datasets, finding hidden patterns, and creating visualizations
                             that make complex data easy to understand. When I'm not analyzing data, you'll find
-                            me learning new tools or sipping Tea while debugging code! 
+                            me learning new tools or sipping Tea while debugging code!
                         </p>
 
                         {/* Info Cards */}
