@@ -94,6 +94,43 @@ const ProjectsSection: React.FC = () => {
         return null
     }
 
+    const renderChart = (project: any) => {
+        if (project.chartType === 'bar') {
+            return (
+                <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={project.chartData}>
+                        <Tooltip content={<CustomBarTooltip />} />
+                        <Bar dataKey="impact" fill="#FF9AA2" radius={[8, 8, 0, 0]} />
+                    </BarChart>
+                </ResponsiveContainer>
+            )
+        }
+        if (project.chartType === 'pie') {
+            return (
+                <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                        <Pie data={project.chartData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value">
+                            {project.chartData.map((entry: any, i: number) => (
+                                <Cell key={`cell-${i}`} fill={entry.color || '#FF9AA2'} />
+                            ))}
+                        </Pie>
+                        <Tooltip />
+                    </PieChart>
+                </ResponsiveContainer>
+            )
+        }
+        return (
+            <ResponsiveContainer width="100%" height="100%">
+                <RadarChart data={project.chartData}>
+                    <PolarGrid stroke="#FFB6C1" />
+                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#9f1239' }} />
+                    <Radar dataKey="value" stroke="#F43F5E" fill="#FF9AA2" fillOpacity={0.5} />
+                    <Tooltip />
+                </RadarChart>
+            </ResponsiveContainer>
+        )
+    }
+
     const ProjectCard = ({ project, index }: { project: any, index: number }) => (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
@@ -122,38 +159,7 @@ const ProjectsSection: React.FC = () => {
 
                     {/* Chart Preview */}
                     <div className="h-44 bg-pink-50/50 rounded-xl p-3 border border-pink-100">
-                        <ResponsiveContainer width="100%" height="100%">
-                            {project.chartType === 'bar' ? (
-                                <BarChart data={project.chartData}>
-                                    <Tooltip content={<CustomBarTooltip />} />
-                                    <Bar dataKey="impact" fill="#FF9AA2" radius={[8, 8, 0, 0]} />
-                                </BarChart>
-                            ) : project.chartType === 'pie' ? (
-                                <PieChart>
-                                    <Pie
-                                        data={project.chartData}
-                                        cx="50%"
-                                        cy="50%"
-                                        innerRadius={40}
-                                        outerRadius={70}
-                                        paddingAngle={5}
-                                        dataKey="value"
-                                    >
-                                        {project.chartData.map((entry: any, i: number) => (
-                                            <Cell key={`cell-${i}`} fill={entry.color || '#FF9AA2'} />
-                                        ))}
-                                    </Pie>
-                                    <Tooltip />
-                                </PieChart>
-                            ) : (
-                                <RadarChart data={project.chartData}>
-                                    <PolarGrid stroke="#FFB6C1" />
-                                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#9f1239' }} />
-                                    <Radar dataKey="value" stroke="#F43F5E" fill="#FF9AA2" fillOpacity={0.5} />
-                                    <Tooltip />
-                                </RadarChart>
-                            )}
-                        </ResponsiveContainer>
+                        {renderChart(project)}
                     </div>
 
                     {/* Key Highlights */}
