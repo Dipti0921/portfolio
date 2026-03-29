@@ -94,42 +94,38 @@ const ProjectsSection: React.FC = () => {
         return null
     }
 
-    const renderChart = (project: any) => {
-        if (project.chartType === 'bar') {
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={project.chartData}>
-                        <Tooltip content={<CustomBarTooltip />} />
-                        <Bar dataKey="impact" fill="#FF9AA2" radius={[8, 8, 0, 0]} />
-                    </BarChart>
-                </ResponsiveContainer>
-            )
-        }
-        if (project.chartType === 'pie') {
-            return (
-                <ResponsiveContainer width="100%" height="100%">
-                    <PieChart>
-                        <Pie data={project.chartData} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value">
-                            {project.chartData.map((entry: any, i: number) => (
-                                <Cell key={`cell-${i}`} fill={entry.color || '#FF9AA2'} />
-                            ))}
-                        </Pie>
-                        <Tooltip />
-                    </PieChart>
-                </ResponsiveContainer>
-            )
-        }
-        return (
-            <ResponsiveContainer width="100%" height="100%">
-                <RadarChart data={project.chartData}>
-                    <PolarGrid stroke="#FFB6C1" />
-                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#9f1239' }} />
-                    <Radar dataKey="value" stroke="#F43F5E" fill="#FF9AA2" fillOpacity={0.5} />
-                    <Tooltip />
-                </RadarChart>
-            </ResponsiveContainer>
-        )
-    }
+    const BarChartWidget = ({ data }: { data: any[] }) => (
+        <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={data}>
+                <Tooltip content={<CustomBarTooltip />} />
+                <Bar dataKey="impact" fill="#FF9AA2" radius={[8, 8, 0, 0]} />
+            </BarChart>
+        </ResponsiveContainer>
+    )
+
+    const PieChartWidget = ({ data }: { data: any[] }) => (
+        <ResponsiveContainer width="100%" height="100%">
+            <PieChart>
+                <Pie data={data} cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={5} dataKey="value">
+                    {data.map((entry: any, i: number) => (
+                        <Cell key={`cell-${i}`} fill={entry.color || '#FF9AA2'} />
+                    ))}
+                </Pie>
+                <Tooltip />
+            </PieChart>
+        </ResponsiveContainer>
+    )
+
+    const RadarChartWidget = ({ data }: { data: any[] }) => (
+        <ResponsiveContainer width="100%" height="100%">
+            <RadarChart data={data}>
+                <PolarGrid stroke="#FFB6C1" />
+                <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#9f1239' }} />
+                <Radar dataKey="value" stroke="#F43F5E" fill="#FF9AA2" fillOpacity={0.5} />
+                <Tooltip />
+            </RadarChart>
+        </ResponsiveContainer>
+    )
 
     const ProjectCard = ({ project, index }: { project: any, index: number }) => (
         <motion.div
@@ -157,14 +153,14 @@ const ProjectsSection: React.FC = () => {
                         {project.description}
                     </p>
 
-                    {/* Chart Preview */}
                     <div className="h-44 bg-pink-50/50 rounded-xl p-3 border border-pink-100">
-                        {renderChart(project)}
+                        {project.chartType === 'bar' && <BarChartWidget data={project.chartData} />}
+                        {project.chartType === 'pie' && <PieChartWidget data={project.chartData} />}
+                        {project.chartType === 'radar' && <RadarChartWidget data={project.chartData} />}
                     </div>
 
-                    {/* Key Highlights */}
                     <ul className="space-y-1">
-                        {project.highlights.map((h, i) => (
+                        {project.highlights.map((h: string, i: number) => (
                             <li key={i} className="flex items-start gap-2 text-xs text-rose-700/80">
                                 <span className="mt-1 w-1.5 h-1.5 rounded-full bg-pink-400 flex-shrink-0" />
                                 {h}
@@ -172,14 +168,9 @@ const ProjectsSection: React.FC = () => {
                         ))}
                     </ul>
 
-                    {/* Tags */}
                     <div className="flex flex-wrap gap-2 pt-1">
-                        {project.tags.map((tag) => (
-                            <Badge
-                                key={tag}
-                                variant="outline"
-                                className="border-pink-200 text-rose-700 bg-white/80 text-xs"
-                            >
+                        {project.tags.map((tag: string) => (
+                            <Badge key={tag} variant="outline" className="border-pink-200 text-rose-700 bg-white/80 text-xs">
                                 {tag}
                             </Badge>
                         ))}
@@ -214,15 +205,9 @@ const ProjectsSection: React.FC = () => {
 
                 <Tabs defaultValue="all" className="w-full">
                     <TabsList className="grid w-full max-w-md mx-auto grid-cols-3 mb-12 bg-pink-100 p-1 rounded-full">
-                        <TabsTrigger value="all" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md">
-                            All
-                        </TabsTrigger>
-                        <TabsTrigger value="python" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md">
-                            Python
-                        </TabsTrigger>
-                        <TabsTrigger value="powerbi" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md">
-                            Power BI
-                        </TabsTrigger>
+                        <TabsTrigger value="all" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md">All</TabsTrigger>
+                        <TabsTrigger value="python" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md">Python</TabsTrigger>
+                        <TabsTrigger value="powerbi" className="rounded-full data-[state=active]:bg-white data-[state=active]:shadow-md">Power BI</TabsTrigger>
                     </TabsList>
 
                     <TabsContent value="all">
@@ -235,7 +220,7 @@ const ProjectsSection: React.FC = () => {
 
                     <TabsContent value="python">
                         <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
-                            {projects.filter(p => p.tab === 'python').map((project, index) => (
+                            {projects.filter((p: any) => p.tab === 'python').map((project: any, index: number) => (
                                 <ProjectCard key={project.id} project={project} index={index} />
                             ))}
                         </div>
@@ -243,7 +228,7 @@ const ProjectsSection: React.FC = () => {
 
                     <TabsContent value="powerbi">
                         <div className="grid md:grid-cols-2 gap-8">
-                            {projects.filter(p => p.tab === 'powerbi').map((project, index) => (
+                            {projects.filter((p: any) => p.tab === 'powerbi').map((project: any, index: number) => (
                                 <ProjectCard key={project.id} project={project} index={index} />
                             ))}
                         </div>
