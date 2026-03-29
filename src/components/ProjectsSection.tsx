@@ -94,7 +94,7 @@ const ProjectsSection: React.FC = () => {
         return null
     }
 
-    const ProjectCard = ({ project, index }: { project: typeof projects[0], index: number }) => (
+    const ProjectCard = ({ project, index }: { project: any, index: number }) => (
         <motion.div
             initial={{ opacity: 0, y: 40 }}
             animate={inView ? { opacity: 1, y: 0 } : {}}
