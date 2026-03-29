@@ -12,7 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 const ProjectsSection: React.FC = () => {
     const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 })
 
-    const projects = [
+    const projects: any[] = [
         {
             id: 'health',
             title: 'Health Insurance Data Analysis',
