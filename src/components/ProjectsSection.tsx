@@ -1,26 +1,25 @@
 "use client"
 
-import React, { useState } from 'react'
+import React from 'react'
 import { motion } from 'framer-motion'
 import { useInView } from 'react-intersection-observer'
-import { BarChart, Bar, PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from 'recharts'
-import { ExternalLink, Sparkles, TrendingUp, Database } from 'lucide-react'
+import { BarChart, Bar, PieChart, Pie, Cell, RadarChart, Radar, PolarGrid, PolarAngleAxis, ResponsiveContainer, Tooltip } from 'recharts'
+import { Sparkles, TrendingUp, Database, Wind } from 'lucide-react'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 
 const ProjectsSection: React.FC = () => {
-    const [ref, inView] = useInView({
-        triggerOnce: true,
-        threshold: 0.1,
-    })
+    const [ref, inView] = useInView({ triggerOnce: true, threshold: 0.1 })
 
     const projects = [
         {
+            id: 'health',
             title: 'Health Insurance Data Analysis',
-            category: 'Python',
-            description: 'Analyzed healthcare cost dataset to identify key predictors of insurance charges.',
-            tags: ['Python', 'Pandas', 'Seaborn', 'EDA'],
+            category: 'Python + Power BI',
+            tab: 'python',
+            description: 'End-to-end analysis of a Kaggle health insurance dataset using Python for EDA, SQL for querying, Excel for summaries, and Power BI for an interactive cost dashboard.',
+            tags: ['Python', 'Pandas', 'SQL', 'Excel', 'Power BI', 'Seaborn'],
             icon: TrendingUp,
             gradient: 'from-pink-400 to-rose-400',
             chartData: [
@@ -29,13 +28,20 @@ const ProjectsSection: React.FC = () => {
                 { name: 'Age', impact: 45 },
                 { name: 'Region', impact: 25 },
             ],
-            chartType: 'bar'
+            chartType: 'bar',
+            highlights: [
+                'Smoking & BMI are top cost predictors',
+                'EDA across age, region & lifestyle factors',
+                'Power BI dashboard for cost visualization',
+            ]
         },
         {
+            id: 'uber',
             title: 'Uber Dataset Dashboard',
             category: 'Power BI',
-            description: 'Interactive dashboard analyzing ride bookings, revenue patterns, and customer trends.',
-            tags: ['Power BI', 'DAX', 'Data Modeling', 'Excel'],
+            tab: 'powerbi',
+            description: 'Interactive Power BI dashboard analyzing ride bookings, revenue patterns, vehicle performance, and customer/driver ratings using DAX calculations and data modeling.',
+            tags: ['Power BI', 'DAX', 'Data Modeling', 'Power Query'],
             icon: Database,
             gradient: 'from-rose-400 to-pink-500',
             chartData: [
@@ -43,23 +49,139 @@ const ProjectsSection: React.FC = () => {
                 { name: 'Cancelled', value: 20, color: '#FFB6C1' },
                 { name: 'Pending', value: 15, color: '#FFC0CB' },
             ],
-            chartType: 'pie'
+            chartType: 'pie',
+            highlights: [
+                'KPIs: revenue, bookings & ratings',
+                'Monthly & quarterly ride trends',
+                'Vehicle type performance analysis',
+            ]
+        },
+        {
+            id: 'aqi',
+            title: 'Air Quality Index (AQI) Dashboard',
+            category: 'Power BI',
+            tab: 'powerbi',
+            description: 'Power BI dashboard analyzing AQI data across Indian cities. Used Power Query for data cleaning and DAX measures to surface pollution patterns and actionable recommendations.',
+            tags: ['Power BI', 'Power Query', 'DAX', 'Kaggle'],
+            icon: Wind,
+            gradient: 'from-fuchsia-400 to-pink-400',
+            chartData: [
+                { subject: 'PM2.5', value: 90 },
+                { subject: 'PM10', value: 80 },
+                { subject: 'NO2', value: 55 },
+                { subject: 'SO2', value: 40 },
+                { subject: 'CO', value: 35 },
+                { subject: 'O3', value: 30 },
+            ],
+            chartType: 'radar',
+            highlights: [
+                'PM2.5 & PM10 dominant across cities',
+                'Pune, Mumbai & Sangli most polluted',
+                'Recommended industrial & urban controls',
+            ]
         },
     ]
 
-    const CustomTooltip = ({ active, payload }: any) => {
+    const CustomBarTooltip = ({ active, payload }: any) => {
         if (active && payload && payload.length) {
             return (
-                <div className="glass rounded-xl p-3 border-2 border-pink-200">
-                    <p className="text-sm font-semibold text-rose-900">{payload[0].name}</p>
-                    <p className="text-xs text-pink-600">
-                        {payload[0].value}% Impact
-                    </p>
+                <div className="rounded-xl p-3 border-2 border-pink-200 bg-white shadow-md">
+                    <p className="text-sm font-semibold text-rose-900">{payload[0].payload.name}</p>
+                    <p className="text-xs text-pink-600">{payload[0].value}% Impact</p>
                 </div>
             )
         }
         return null
     }
+
+    const ProjectCard = ({ project, index }: { project: typeof projects[0], index: number }) => (
+        <motion.div
+            initial={{ opacity: 0, y: 40 }}
+            animate={inView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.6, delay: index * 0.15 }}
+        >
+            <Card className="group h-full border-2 border-pink-200 bg-gradient-to-br from-white to-pink-50/30 hover:border-pink-300 transition-all duration-300 card-hover overflow-hidden">
+                <CardHeader>
+                    <div className="flex items-start justify-between mb-4">
+                        <div className={`p-3 rounded-2xl bg-gradient-to-br ${project.gradient} shadow-lg`}>
+                            <project.icon className="w-6 h-6 text-white" />
+                        </div>
+                        <Badge className="bg-pink-100 text-pink-700 border-pink-200">
+                            {project.category}
+                        </Badge>
+                    </div>
+                    <CardTitle className="text-xl font-bold text-rose-900 group-hover:text-pink-600 transition-colors">
+                        {project.title}
+                    </CardTitle>
+                </CardHeader>
+
+                <CardContent className="space-y-4">
+                    <p className="text-rose-700/70 leading-relaxed text-sm">
+                        {project.description}
+                    </p>
+
+                    {/* Chart Preview */}
+                    <div className="h-44 bg-pink-50/50 rounded-xl p-3 border border-pink-100">
+                        <ResponsiveContainer width="100%" height="100%">
+                            {project.chartType === 'bar' ? (
+                                <BarChart data={project.chartData}>
+                                    <Tooltip content={<CustomBarTooltip />} />
+                                    <Bar dataKey="impact" fill="#FF9AA2" radius={[8, 8, 0, 0]} />
+                                </BarChart>
+                            ) : project.chartType === 'pie' ? (
+                                <PieChart>
+                                    <Pie
+                                        data={project.chartData}
+                                        cx="50%"
+                                        cy="50%"
+                                        innerRadius={40}
+                                        outerRadius={70}
+                                        paddingAngle={5}
+                                        dataKey="value"
+                                    >
+                                        {project.chartData.map((entry: any, i: number) => (
+                                            <Cell key={`cell-${i}`} fill={entry.color || '#FF9AA2'} />
+                                        ))}
+                                    </Pie>
+                                    <Tooltip />
+                                </PieChart>
+                            ) : (
+                                <RadarChart data={project.chartData}>
+                                    <PolarGrid stroke="#FFB6C1" />
+                                    <PolarAngleAxis dataKey="subject" tick={{ fontSize: 11, fill: '#9f1239' }} />
+                                    <Radar dataKey="value" stroke="#F43F5E" fill="#FF9AA2" fillOpacity={0.5} />
+                                    <Tooltip />
+                                </RadarChart>
+                            )}
+                        </ResponsiveContainer>
+                    </div>
+
+                    {/* Key Highlights */}
+                    <ul className="space-y-1">
+                        {project.highlights.map((h, i) => (
+                            <li key={i} className="flex items-start gap-2 text-xs text-rose-700/80">
+                                <span className="mt-1 w-1.5 h-1.5 rounded-full bg-pink-400 flex-shrink-0" />
+                                {h}
+                            </li>
+                        ))}
+                    </ul>
+
+                    {/* Tags */}
+                    <div className="flex flex-wrap gap-2 pt-1">
+                        {project.tags.map((tag) => (
+                            <Badge
+                                key={tag}
+                                variant="outline"
+                                className="border-pink-200 text-rose-700 bg-white/80 text-xs"
+                            >
+                                {tag}
+                            </Badge>
+                        ))}
+                    </div>
+                </CardContent>
+            </Card>
+        </motion.div>
+    )
 
     return (
         <section id="projects" className="relative py-20 md:py-28 overflow-hidden bg-white">
@@ -98,109 +220,25 @@ const ProjectsSection: React.FC = () => {
                     </TabsList>
 
                     <TabsContent value="all">
-                        <div className="grid md:grid-cols-2 gap-8">
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
                             {projects.map((project, index) => (
-                                <motion.div
-                                    key={project.title}
-                                    initial={{ opacity: 0, y: 40 }}
-                                    animate={inView ? { opacity: 1, y: 0 } : {}}
-                                    transition={{ duration: 0.6, delay: index * 0.15 }}
-                                >
-                                    <Card className="group h-full border-2 border-pink-200 bg-gradient-to-br from-white to-pink-50/30 hover:border-pink-300 transition-all duration-300 card-hover overflow-hidden">
-                                        {/* Header */}
-                                        <CardHeader>
-                                            <div className="flex items-start justify-between mb-4">
-                                                <div className={`p-3 rounded-2xl bg-gradient-to-br ${project.gradient} shadow-lg`}>
-                                                    <project.icon className="w-6 h-6 text-white" />
-                                                </div>
-                                                <Badge className="bg-pink-100 text-pink-700 border-pink-200">
-                                                    {project.category}
-                                                </Badge>
-                                            </div>
-                                            <CardTitle className="text-2xl font-bold text-rose-900 group-hover:text-pink-600 transition-colors">
-                                                {project.title}
-                                            </CardTitle>
-                                        </CardHeader>
-
-                                        <CardContent className="space-y-4">
-                                            <p className="text-rose-700/70 leading-relaxed">
-                                                {project.description}
-                                            </p>
-
-                                            {/* Chart Preview */}
-                                            <div className="h-48 bg-pink-50/50 rounded-xl p-4 border border-pink-100">
-                                                <ResponsiveContainer width="100%" height="100%">
-                                                    {project.chartType === 'bar' ? (
-                                                        <BarChart data={project.chartData}>
-                                                            <Tooltip content={<CustomTooltip />} />
-                                                            <Bar dataKey="impact" fill="#FF9AA2" radius={[8, 8, 0, 0]} />
-                                                        </BarChart>
-                                                    ) : (
-                                                        <PieChart>
-                                                            <Pie
-                                                                data={project.chartData}
-                                                                cx="50%"
-                                                                cy="50%"
-                                                                innerRadius={40}
-                                                                outerRadius={70}
-                                                                paddingAngle={5}
-                                                                dataKey="value"
-                                                            >
-                                                                {project.chartData.map((entry: any, index) => (
-                                                                    <Cell key={`cell-${index}`} fill={entry.color || '#FF9AA2'} />
-                                                                ))}
-                                                            </Pie>
-                                                            <Tooltip />
-                                                        </PieChart>
-                                                    )}
-                                                </ResponsiveContainer>
-                                            </div>
-
-                                            {/* Tags */}
-                                            <div className="flex flex-wrap gap-2">
-                                                {project.tags.map((tag) => (
-                                                    <Badge
-                                                        key={tag}
-                                                        variant="outline"
-                                                        className="border-pink-200 text-rose-700 bg-white/80"
-                                                    >
-                                                        {tag}
-                                                    </Badge>
-                                                ))}
-                                            </div>
-                                        </CardContent>
-                                    </Card>
-                                </motion.div>
+                                <ProjectCard key={project.id} project={project} index={index} />
                             ))}
                         </div>
                     </TabsContent>
 
                     <TabsContent value="python">
-                        <div className="grid md:grid-cols-2 gap-8">
-                            {projects.filter(p => p.category === 'Python').map((project, index) => (
-                                <Card key={project.title} className="border-2 border-pink-200">
-                                    <CardHeader>
-                                        <CardTitle>{project.title}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p>{project.description}</p>
-                                    </CardContent>
-                                </Card>
+                        <div className="grid md:grid-cols-2 gap-8 max-w-2xl mx-auto">
+                            {projects.filter(p => p.tab === 'python').map((project, index) => (
+                                <ProjectCard key={project.id} project={project} index={index} />
                             ))}
                         </div>
                     </TabsContent>
 
                     <TabsContent value="powerbi">
                         <div className="grid md:grid-cols-2 gap-8">
-                            {projects.filter(p => p.category === 'Power BI').map((project, index) => (
-                                <Card key={project.title} className="border-2 border-pink-200">
-                                    <CardHeader>
-                                        <CardTitle>{project.title}</CardTitle>
-                                    </CardHeader>
-                                    <CardContent>
-                                        <p>{project.description}</p>
-                                    </CardContent>
-                                </Card>
+                            {projects.filter(p => p.tab === 'powerbi').map((project, index) => (
+                                <ProjectCard key={project.id} project={project} index={index} />
                             ))}
                         </div>
                     </TabsContent>
